@@ -1,0 +1,25 @@
+- name: change and make grub config
+  hosts: nodes
+  tasks:
+    - name: Clear target options with non-zero values in grub config
+      lineinfile:
+        path: /etc/default/grub
+        state: present
+        backrefs: yes
+        regexp: '^GRUB_CMDLINE_LINUX=\"(((?!{{ item }}=[^0].*)(?P<p1>.*?)(\ *{{ item }}=[^0]\ *?)(?P<p2>.*))|((?={{ item }}=[^0].*)({{ item }}=[^0]\ *)(?P<p3>.*)))\"$'
+        line: 'GRUB_CMDLINE_LINUX="\g<p1>\g<p2>\g<p3>"'
+      loop:
+        - net.ifnames
+        - biosdevname
+    - name: Add missing parameters to grub config
+      lineinfile:
+        path: /etc/default/grub
+        state: present
+        backrefs: yes
+        regexp: '^GRUB_CMDLINE_LINUX=\"((?!.*{{ item }}.*)(?P<opts>.*))\"$'
+        line: 'GRUB_CMDLINE_LINUX="\g<opts> {{ item }}=0"'
+      loop:
+        - net.ifnames
+        - biosdevname
+    - name: Make grub config
+      command: grub2-mkconfig -o /boot/grub2/grub.cfg

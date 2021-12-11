@@ -1,0 +1,34 @@
+- name: install httpd and open ports
+  hosts: nodes
+  tasks:
+    - name: install httpd
+      yum:
+        name: httpd
+        state: latest
+    - name: run httpd
+      service:
+        name: httpd
+        enabled: yes
+        state: started
+    - name: get service facts
+      service_facts:
+    - name: display httpd service status
+      debug:
+        msg: Httpd service is {{ ansible_facts.services['httpd.service']['state'] }}
+    - name: create index page
+      copy:
+        dest: /var/www/html/index.html
+        content: Welcome to my web server
+        owner: apache
+        group: apache
+        mode: 0644
+    - name: start firewalld service
+      service:
+        name: firewalld
+        state: started
+    - name: configure firewall
+      firewalld:
+        permanent: yes
+        immediate: yes
+        service: http
+        state: enabled

@@ -1,0 +1,21 @@
+- name: remove httpd and close ports
+  hosts: nodes
+  tasks:
+    - name: remove httpd
+      yum:
+        name: httpd
+        state: removed
+    - name: remove index page
+      file:
+        path: /var/www/html/index.html
+        state: absent
+    - name: start firewalld service
+      service:
+        name: firewalld
+        state: started
+    - name: configure firewall
+      firewalld:
+        permanent: yes
+        immediate: yes
+        service: http
+        state: disabled
