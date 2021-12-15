@@ -1,3 +1,4 @@
+---
 - name: install httpd and open ports
   hosts: nodes
   tasks:

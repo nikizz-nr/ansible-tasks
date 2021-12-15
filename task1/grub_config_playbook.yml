@@ -1,3 +1,4 @@
+---
 - name: change and make grub config
   hosts: nodes
   tasks:
