@@ -1,0 +1,8 @@
+galaxy_info:
+  author: Nikita Rubtsov
+  description: Student
+  company: EPAM Systems
+  license: BSD
+  min_ansible_version: 2.9
+  galaxy_tags: [vsftpd]
+  dependencies: []

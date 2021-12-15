@@ -1,0 +1,5 @@
+---
+- name: install httpd and open ports
+  hosts: nodes
+  roles:
+    - install_httpd

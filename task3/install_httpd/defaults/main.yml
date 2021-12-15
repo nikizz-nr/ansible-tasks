@@ -1,0 +1,8 @@
+---
+# defaults file for install_httpd
+service_name: httpd
+service_full_name: httpd.service
+index_page_path: /var/www/html/index.html
+index_file_template: index.j2
+httpd_user: apache
+firewall_service: http

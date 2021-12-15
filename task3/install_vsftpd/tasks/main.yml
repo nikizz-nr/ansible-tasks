@@ -1,0 +1,52 @@
+---
+# tasks file for install_vsftpd
+- name: install packages
+  yum:
+    name: "{{ item }}"
+    state: latest
+  loop:
+    - vsftpd
+    - python3-libsemanage
+    - python3-policycoreutils
+
+- name: create config file from template
+  template:
+    dest: /etc/vsftpd/vsftpd.conf
+    src: vsftpd.j2
+    owner: root
+    group: root
+    mode: 0600
+  notify:
+    - vsftpd restart
+
+- name: create upload dir
+  file:
+    path: /var/ftp/pub/upload
+    state: directory
+    owner: ftp
+    group: ftp
+    mode: 0777
+  notify:
+    - set dir context
+    - run restorecon
+
+- name: set selinux boolean
+  seboolean:
+    name: ftpd_anon_write
+    persistent: yes
+    state: yes
+
+- name: get service facts
+  service_facts:
+
+- name: display vsftpd status
+  debug:
+    msg: "Vsftpd service is {{ ansible_facts.services['vsftpd.service']['state'] }}"
+
+- name: configure firewall
+  firewalld:
+    permanent: yes
+    service: ftp
+    state: enabled
+  notify:
+    - firewalld restart

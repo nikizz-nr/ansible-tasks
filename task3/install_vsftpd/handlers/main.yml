@@ -1,0 +1,23 @@
+---
+# handlers file for install_vsftpd
+- name: firewalld restart
+  service:
+    name: firewalld
+    state: reloaded
+
+- name: set dir context
+  sefcontext:
+    ftype: d
+    target: /var/ftp/pub/upload
+    setype: public_content_rw_t
+    state: present
+    reload: yes
+
+- name: run restorecon
+  command: restorecon -ivr /var/ftp/pub/upload
+
+- name: vsftpd restart
+  service:
+    name: vsftpd
+    enabled: yes
+    state: restarted

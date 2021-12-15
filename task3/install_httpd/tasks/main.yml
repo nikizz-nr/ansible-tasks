@@ -1,0 +1,35 @@
+---
+# tasks file for install_httpd
+- name: install web service
+  yum:
+    name: "{{ service_name }}"
+    state: latest
+
+- name: run web service
+  service:
+    name: "{{ service_name }}"
+    enabled: yes
+    state: started
+
+- name: get service facts
+  service_facts:
+
+- name: display web service status
+  debug:
+    msg: "{{ service_name }} service is {{ ansible_facts.services[service_full_name]['state'] }}"
+
+- name: create index page
+  template:
+    dest: "{{ index_page_path }}"
+    src: "{{ index_file_template }}"
+    owner: "{{ httpd_user }}"
+    group: "{{ httpd_user }}"
+    mode: 0644
+
+- name: configure firewall
+  firewalld:
+    permanent: yes
+    service: "{{ firewall_service }}"
+    state: enabled
+  notify:
+    - firewalld restart
