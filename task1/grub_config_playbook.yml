@@ -1,6 +1,6 @@
 ---
 - name: change and make grub config
-  hosts: nodes
+  hosts: all
   tasks:
     - name: Clear target options with non-zero values in grub config
       lineinfile:

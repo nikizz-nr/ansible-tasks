@@ -1,6 +1,6 @@
 ---
 - name: remove httpd and close ports
-  hosts: nodes
+  hosts: all
   vars:
     - users:
         - name: Alice
